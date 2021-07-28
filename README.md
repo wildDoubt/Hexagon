@@ -9,3 +9,25 @@ Hexagon is a "Discord bot" who can tracked the activity of each member in the ch
 - 같은 채널 내의 다른 유저의 스탯 조회
 - 같은 채널 내에서 작동하는 리더보드 기능 구현
 - 주로 활동하는 시간대 조회
+
+## Environments
+
+- node v14.15.4
+- mongodb v4.0.1
+- discord.js v12.5.3
+- dotenv
+
+## How to Use Hexagon
+
+1. First, clone this project
+   `git clone https://github.com/wildDoubt/Hexagon.git`
+   
+2. Modify BOT_TOKEN on the last line of `main.js`
+
+3. Recommended connecting to [Atlas](https://www.mongodb.com/cloud/atlas) to use the cloud database.
+
+4. Modify uri on `plugins/MongoDB/index.js`
+
+```javascript
+const uri = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@cluster0.tywvp.mongodb.net/Cluster0?retryWrites=true&w=majority`;
+```
