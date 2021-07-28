@@ -38,10 +38,6 @@ const getUsers = (receivedMessage) => {
     return data;
 }
 
-const getUsername = (receivedMessage) => {
-    return receivedMessage.author.username;
-}
-
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
@@ -136,8 +132,6 @@ client.on('presenceUpdate', (oldMember, newMember) => {
         })
         presenceUpdated = true;
     }
-
-
 })
 
 client.login(process.env.BOT_TOKEN);

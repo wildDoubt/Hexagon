@@ -26,6 +26,7 @@ async function findUser(user_id) {
 }
 
 async function addUser(user_data) {
+    // db에 유저 데이터 생성
     const collection = db.collection("USER");
     for (let user of user_data) {
         const exist = await findUser(user.user_id);
