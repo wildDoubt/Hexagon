@@ -18,17 +18,6 @@ async function connect(func, ...args) {
     }
 }
 
-async function insert() {
-    const collection = db.collection("test");
-    const data = {
-        name: '최원영',
-        age: 24,
-        createdAt: new Date(),
-    };
-    await collection.insertOne(data);
-    console.log("DONE!");
-}
-
 
 async function findUser(user_id) {
     const collection = db.collection("USER");
