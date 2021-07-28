@@ -32,13 +32,33 @@ async function insert() {
 
 async function findUser(user_id) {
     const collection = db.collection("USER");
-    const user = await collection.findOne({user_id:user_id});
-    if(user){
-        console.log(user);
+    const user = await collection.findOne({user_id: user_id});
+    return user !== undefined;
+}
+
+async function addUser(user_data){
+    const collection = db.collection("USER");
+    for(let user of user_data){
+        const exist = await findUser(user.user_id);
+        if(!exist){
+            const result = await collection.insertOne(user);
+            console.log(
+                `A document was inserted with the _id: ${result.insertedId}`,
+            )
+        }
     }
+}
+
+async function addChannel(channel_id){
+    const collection = db.collection("CHANNEL");
+    const channel = await collection.findOne({channel_id:channel_id});
+    // 채널이 존재하지 않으면 추가
+    // 개인 플레이타임 기능 완성되면 구현
 }
 
 module.exports = {
     insert: async () => await connect(insert),
-    findUser: async (user_id) => await connect(findUser, user_id)
+    findUser: async (user_id) => await connect(findUser, user_id),
+    addChannel: async (channel_id) => await connect(addChannel, channel_id),
+    addUser: async (user_data) => await connect(addUser, user_data),
 };
