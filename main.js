@@ -1,11 +1,11 @@
 require('dotenv').config();
 const Discord = require('discord.js');
-const {insert, findUser, addUser, recordPlaytime} = require('./plugins/MongoDB');
+const {insert, findUser, addUser, recordPlaytime} = require('./uitils/MongoDB');
 const intents = Discord.Intents.ALL;
 const client = new Discord.Client({intents: [intents]});
+const {PLAYING} = require('./uitils/strings.json');
 
-const PLAYING = 'PLAYING';
-
+let users = new Map();
 
 const initialUserState = {
     user_id: '',
@@ -13,15 +13,41 @@ const initialUserState = {
     total_playtime: 0,
 }
 
-let users = new Map();
+const initializeAllUserStatus = () => {
+    for (let guild of client.guilds.cache) {
+        guild[1].members.cache.forEach(value => {
+            const {user} = value;
+
+            if (users.get(user.id) === undefined && !user.bot) {
+                users.set(user.id, []);
+                getPlayingActivities(user).forEach(activity => {
+                    users.get(user.id).push(
+                        {
+                            name: activity.name,
+                            start: activity.start,
+                            end: null,
+                        }
+                    )
+                })
+                console.log(user.username, users.get(user.id));
+            }
+        })
+    }
+}
+
+const getPlayingActivities = (user) => {
+    return user.presence.activities
+        .filter((value) => value.type === PLAYING)
+        .map(value => {
+            return {
+                name: value.name,
+                start: value.timestamps.start,
+            }
+        });
+}
 
 const endActivity = (user_id, activities) => {
     return users.get(user_id).length > activities.length
-    // console.log(users.get(user_id))
-    // console.log(activities)
-    // users.get(user_id).forEach(({name})=>{
-    //
-    // })
 }
 
 const getUsers = (receivedMessage) => {
@@ -40,14 +66,7 @@ const getUsers = (receivedMessage) => {
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
-
-    for (let guild of client.guilds.cache) {
-        guild[1].members.cache.forEach(value => {
-            if (!value.user.bot) {
-                users.set(value.user.id, []);
-            }
-        })
-    }
+    initializeAllUserStatus();
 });
 
 client.on('message', msg => {
@@ -68,8 +87,8 @@ client.on('message', msg => {
         // 메시지 보낸 서버의 모든 유저 데이터 생성
         // 마찬가지로 봇이 채널에 들어가면 바로 실행해야함.
         addUser(getUsers(msg));
-    } else if(msg.content==='test'){
-        recordPlaytime('316068755073400842','7 Billion Humans', 5)
+    } else if (msg.content === 'test') {
+        recordPlaytime('316068755073400842', '7 Billion Humans', 5)
     }
 });
 
@@ -81,38 +100,33 @@ client.on('presenceUpdate', (oldMember, newMember) => {
         return;
     }
 
-    const activities = newMember.user.presence.activities
-        .filter((value) => value.type === PLAYING)
-        .map(value => {
-            return {
-                name: value.name,
-                start: value.timestamps.start,
-            }
-        });
+    const activities = getPlayingActivities(newMember.user);
+
     const user_id = newMember.user.id;
-    // endActivity(user_id, activities);
-    // console.log(endActivity(user_id, activities))
+
     if (!endActivity(user_id, activities)) {
         presenceUpdated = true;
         console.log(activities)
-        newMember.user.presence.activities.forEach(activity => {
-            if (activities.map((value) => value.name).find(value => {
-                return value === activity.name;
-            })) {
+        activities.forEach(activity => {
+            if (activities
+                .map((value) => value.name)
+                .find(value => {
+                    return value === activity.name;
+                })) {
                 if (users
                     .get(user_id)
                     .filter((value) => {
                         return value.name === activities[0].name
                     })
-                    .length===0) {
+                    .length === 0) {
                     users.get(user_id).push({
                         name: activities[0].name,
                         start: activities[0].start,
                         end: null,
                     })
                 } else {
-                    users.get(user_id).forEach(value=>{
-                        if(value.name===activities[0].name){
+                    users.get(user_id).forEach(value => {
+                        if (value.name === activities[0].name) {
                             value.start = activities[0].start
                         }
                     })
@@ -121,15 +135,16 @@ client.on('presenceUpdate', (oldMember, newMember) => {
             }
         })
     } else {
-        users.get(user_id).forEach(activity => {
-            if(activity.end===null) {
-                const curr = new Date();
-                activity.end = curr;
-                const playtime = Math.round((curr - activity.start) / 1000);
-                console.log(activity.name, playtime);
-                recordPlaytime(user_id, activity.name, playtime);
-            }
-        })
+        console.log("end activity");
+        // users.get(user_id).forEach(activity => {
+        //     if (activity.end === null) {
+        //         const curr = new Date();
+        //         activity.end = curr;
+        //         const playtime = Math.round((curr - activity.start) / 1000);
+        //         console.log(activity.name, playtime);
+        //         recordPlaytime(user_id, activity.name, playtime);
+        //     }
+        // })
         presenceUpdated = true;
     }
 })

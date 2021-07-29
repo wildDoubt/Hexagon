@@ -1,13 +1,14 @@
 require('dotenv').config();
 const {MongoClient} = require('mongodb');
 const {MONGODB_USER, MONGODB_PASSWORD} = process.env;
+const {DB, USER} = require('../strings.json');
 const uri = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@cluster0.tywvp.mongodb.net/Cluster0?retryWrites=true&w=majority`;
 const client = new MongoClient(uri,
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });
-const db = client.db("MyDB");
+const db = client.db(DB);
 
 async function connect(func, ...args) {
     try {
@@ -20,14 +21,14 @@ async function connect(func, ...args) {
 
 
 async function findUser(user_id) {
-    const collection = db.collection("USER");
+    const collection = db.collection(USER);
     const user = await collection.findOne({user_id: user_id});
     return user !== undefined;
 }
 
 async function addUser(user_data) {
     // db에 유저 데이터 생성
-    const collection = db.collection("USER");
+    const collection = db.collection(USER);
     for (let user of user_data) {
         const exist = await findUser(user.user_id);
         if (!exist) {
@@ -40,7 +41,7 @@ async function addUser(user_data) {
 }
 
 async function recordPlaytime(user_id, activity, playtime) {
-    const collection = db.collection("USER");
+    const collection = db.collection(USER);
     console.log(user_id, activity, playtime)
     const filter = {user_id: user_id, "activity.name": activity};
     const updateDocument = {

@@ -13,6 +13,7 @@ Hexagon is a "Discord bot" who can tracked the activity of each member in the ch
 
 ### Dev
 - 새로운 유저가 채널에 들어왔을 때
+- 2개 이상 게임을 플레이 중일 때
 
 ## Environments
 
