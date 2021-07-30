@@ -4,7 +4,8 @@
   "description": "Hexagon is a \"Discord bot\" who can tracked the activity of each member in the channel.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint --ext .js ./ --fix"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
+    "eslint": "^7.31.0",
     "mongodb": "^4.0.1"
   }
 }
