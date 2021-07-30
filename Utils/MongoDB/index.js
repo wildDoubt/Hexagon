@@ -92,9 +92,33 @@ async function addChannel(channel_id) {
     // 개인 플레이타임 기능 완성되면 구현
 }
 
+function getPlaytime(user_id) {
+    return new Promise((resolve, reject) => {
+        let data;
+        client.connect()
+            .then(() =>
+                db.collection(USER).findOne({
+                    user_id: user_id
+                })
+            )
+            .then(document => {
+                data = document.activity;
+            })
+            .catch(error => {
+                reject(Error(error));
+            })
+            .finally(() => {
+                client.close().then(() => {
+                    resolve(data)
+                })
+            })
+    })
+}
+
 module.exports = {
     findUser: async (user_id) => await connect(findUser, user_id),
     addChannel: async (channel_id) => await connect(addChannel, channel_id),
     addUser: async (user_data) => await connect(addUser, user_data),
     recordPlaytime: async (user_id, activity, playtime) => await connect(recordPlaytime, user_id, activity, playtime),
+    getPlaytime,
 };
