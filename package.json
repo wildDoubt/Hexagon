@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/wildDoubt/Hexagon#readme",
   "dependencies": {
+    "chart.js": "^3.5.0",
+    "chartjs-node-canvas": "^3.2.0",
     "discord.js": "^12.5.3",
     "mongoose": "^5.13.4"
   },
