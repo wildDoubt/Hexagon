@@ -1,7 +1,7 @@
 require('dotenv').config();
 const {MongoClient} = require('mongodb');
 const {MONGODB_USER, MONGODB_PASSWORD} = process.env;
-const {DB, USER} = require('../strings.json');
+const {DB, USER, HISTORY, GUILD} = require('../strings.json');
 const uri = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@cluster0.tywvp.mongodb.net/Cluster0?retryWrites=true&w=majority`;
 const client = new MongoClient(uri,
     {
@@ -43,7 +43,8 @@ async function addUser(user_data) {
 async function recordPlaytime(user_id, activity, playtime) {
     const collection = db.collection(USER);
     console.log(user_id, activity, playtime)
-    const filter = {user_id: user_id, "activity.name": activity};
+    await recordHistory(user_id, activity.name, activity.start);
+    const filter = {user_id: user_id, "activity.name": activity.name};
     const updateDocument = {
         $inc: {
             total_playtime: playtime,
@@ -57,7 +58,7 @@ async function recordPlaytime(user_id, activity, playtime) {
             {
                 $push: {
                     activity: {
-                        name: activity,
+                        name: activity.name,
                         playtime: playtime,
                     }
                 },
@@ -69,15 +70,29 @@ async function recordPlaytime(user_id, activity, playtime) {
     }
 }
 
+async function recordHistory(user_id, activity_name, start_time) {
+    const collection = db.collection(HISTORY);
+    // user 컬렉션에 없는 user_id가 들어오는 경우?? 일단 넣자.
+    const data = {
+        user_id: user_id,
+        activity_name: activity_name,
+        start_time: start_time,
+        end_time: new Date()
+    }
+    const result = await collection.insertOne(data);
+    console.log(
+        `A document was inserted with the _id: ${result.insertedId}`,
+    )
+}
+
 async function addChannel(channel_id) {
-    const collection = db.collection("CHANNEL");
+    const collection = db.collection(GUILD);
     const channel = await collection.findOne({channel_id: channel_id});
     // 채널이 존재하지 않으면 추가
     // 개인 플레이타임 기능 완성되면 구현
 }
 
 module.exports = {
-    insert: async () => await connect(insert),
     findUser: async (user_id) => await connect(findUser, user_id),
     addChannel: async (channel_id) => await connect(addChannel, channel_id),
     addUser: async (user_data) => await connect(addUser, user_data),

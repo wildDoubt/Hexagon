@@ -1,9 +1,13 @@
 require('dotenv').config();
 const Discord = require('discord.js');
-const {insert, findUser, addUser, recordPlaytime} = require('./uitils/MongoDB');
+const {
+    findUser,
+    addUser,
+    recordPlaytime,
+} = require('./Utils/MongoDB');
 const intents = Discord.Intents.ALL;
 const client = new Discord.Client({intents: [intents]});
-const {PLAYING} = require('./uitils/strings.json');
+const {PLAYING} = require('./Utils/strings.json');
 
 let users = new Map();
 
@@ -42,6 +46,7 @@ const getPlayingActivities = (user) => {
             return {
                 name: value.name,
                 start: value.timestamps.start,
+                end: null
             }
         });
 }
@@ -72,8 +77,6 @@ client.on('ready', () => {
 client.on('message', msg => {
     if (msg.content === 'ping') {
         msg.reply('pong');
-    } else if (msg.content === 'insert') {
-        insert();
     } else if (msg.content === 'state') {
         console.log(msg.author.id)
     } else if (msg.content === 'add') {
@@ -103,48 +106,31 @@ client.on('presenceUpdate', (oldMember, newMember) => {
     const activities = getPlayingActivities(newMember.user);
 
     const user_id = newMember.user.id;
+    const prevActivities = users.get(user_id);
+    users.set(user_id, activities);
 
-    if (!endActivity(user_id, activities)) {
+    if (prevActivities.length < activities.length) {
         presenceUpdated = true;
-        console.log(activities)
-        activities.forEach(activity => {
-            if (activities
-                .map((value) => value.name)
-                .find(value => {
-                    return value === activity.name;
-                })) {
-                if (users
-                    .get(user_id)
-                    .filter((value) => {
-                        return value.name === activities[0].name
-                    })
-                    .length === 0) {
-                    users.get(user_id).push({
-                        name: activities[0].name,
-                        start: activities[0].start,
-                        end: null,
-                    })
-                } else {
-                    users.get(user_id).forEach(value => {
-                        if (value.name === activities[0].name) {
-                            value.start = activities[0].start
-                        }
-                    })
-                }
-                console.log('users' + users.get(user_id))
-            }
+        activities.filter(activity => {
+            return !prevActivities
+                .map(prevActivity => prevActivity.name)
+                .find(value => value === activity.name);
         })
+            .forEach(value => {
+                console.log(value)
+            })
     } else {
         console.log("end activity");
-        // users.get(user_id).forEach(activity => {
-        //     if (activity.end === null) {
-        //         const curr = new Date();
-        //         activity.end = curr;
-        //         const playtime = Math.round((curr - activity.start) / 1000);
-        //         console.log(activity.name, playtime);
-        //         recordPlaytime(user_id, activity.name, playtime);
-        //     }
-        // })
+        prevActivities.filter(prevActivity => {
+            return !activities
+                .map(activity => activity.name)
+                .find(value => value === prevActivity.name);
+        })
+            .forEach(endActivity => {
+                const curr = new Date();
+                const playtime = Math.round((curr - endActivity.start) / 1000);
+                recordPlaytime(user_id, endActivity, playtime)
+            })
         presenceUpdated = true;
     }
 })
