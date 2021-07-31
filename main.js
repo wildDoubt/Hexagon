@@ -183,8 +183,8 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 	const prevActivities = users.get(user_id);
 	users.set(user_id, activities);
 
-	if(!prevActivities.hasOwnProperty(length)
-		||activities.hasOwnProperty(length)){
+	if(!prevActivities.hasOwnProperty('length')
+		||!activities.hasOwnProperty('length')){
 		return;
 	}
 
