@@ -18,6 +18,7 @@ const initialUserState = {
 	user_id: '',
 	username: '',
 	total_playtime: 0,
+	activity: [],
 };
 
 const plugin = {
@@ -45,7 +46,7 @@ const initializeAllUserStatus = () => {
 						},
 					);
 				});
-				console.log(user.username, users.get(user.id));
+				console.log(user.username, user.id, users.get(user.id));
 			}
 		});
 	}
@@ -57,7 +58,7 @@ const getPlayingActivities = (user) => {
 		.map(value => {
 			return {
 				name: value.name,
-				start: value.timestamps.start,
+				start: value.timestamps?.start??new Date(value.createdTimestamp),
 				end: null,
 			};
 		});
@@ -85,8 +86,7 @@ client.on('ready', () => {
 client.on('message', msg => {
 	if (msg.content === 'ping') {
 		msg.reply('pong');
-	}
-	else if (msg.content === 'state') {
+	} else if (msg.content === 'state') {
 		console.log(msg.author.id);
 	}
 	else if (msg.content === 'add') {
@@ -183,12 +183,12 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 	const prevActivities = users.get(user_id);
 	users.set(user_id, activities);
 
-	if(!prevActivities.hasOwnProperty('length')
-		||!activities.hasOwnProperty('length')){
+	if(!prevActivities?.hasOwnProperty('length')
+		||!activities?.hasOwnProperty('length')){
 		return;
 	}
 
-	if (prevActivities.length < activities.length) {
+	if (prevActivities.length <= activities.length) {
 		presenceUpdated = true;
 		activities.filter(activity => {
 			return !prevActivities
@@ -213,6 +213,17 @@ client.on('presenceUpdate', (oldMember, newMember) => {
 			});
 		presenceUpdated = true;
 	}
+});
+
+client.on('guildMemberAdd', member => {
+	const {id, username} = member.user;
+	addUser([{
+		...initialUserState,
+		user_id:id,
+		username:username
+	}]).then(()=>{
+		console.log(`${username}님이 ${member.guild.name}에 합류했어요.`)
+	})
 });
 
 client.login(process.env.BOT_TOKEN);
