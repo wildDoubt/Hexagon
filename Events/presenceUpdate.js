@@ -8,7 +8,7 @@ let presenceUpdated = false;
 module.exports = {
 	name: path.basename(__filename).split('.')[0],
 	once: false,
-	execute(oldMember, newMember){
+	execute(oldMember, newMember) {
 		if (presenceUpdated) {
 			presenceUpdated = false;
 			return;
@@ -20,8 +20,11 @@ module.exports = {
 		const prevActivities = users.get(user_id);
 		users.set(user_id, activities);
 
-		if(!prevActivities?.hasOwnProperty('length')
-			||!activities?.hasOwnProperty('length')){
+		if (prevActivities === undefined || activities === undefined) {
+			return;
+		}
+		if (!Object.prototype.hasOwnProperty.call(prevActivities, 'length')
+			|| !Object.prototype.hasOwnProperty.call(activities, 'length')) {
 			return;
 		}
 
@@ -50,5 +53,5 @@ module.exports = {
 				});
 			presenceUpdated = true;
 		}
-	}
-}
+	},
+};

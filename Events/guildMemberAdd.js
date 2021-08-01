@@ -11,14 +11,14 @@ const initialUserState = {
 module.exports = {
 	name: path.basename(__filename).split('.')[0],
 	once: false,
-	execute(member){
-		const {id, username} = member.user;
+	execute(member) {
+		const { id, username } = member.user;
 		addUser([{
 			...initialUserState,
 			user_id:id,
-			username:username
+			username:username,
 		}]).then(()=>{
-			console.log(`${username}님이 ${member.guild.name}에 합류했어요.`)
-		})
-	}
-}
+			console.log(`${username}님이 ${member.guild.name}에 합류했어요.`);
+		});
+	},
+};

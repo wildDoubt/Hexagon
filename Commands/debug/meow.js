@@ -11,7 +11,7 @@ module.exports = class MeowCommand extends Command {
 		});
 	}
 
-	run(message){
+	run(message) {
 		return message.say('Meow!');
 	}
 };

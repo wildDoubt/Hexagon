@@ -5,7 +5,7 @@ const fs = require('fs');
 
 const client = new Client({
 	commandPrefix: '!',
-	owner: process.env.OWNER_ID, // 관리자 아이디
+	owner: process.env.OWNER_ID,
 	ws: { intents: Discord.Intents.ALL },
 });
 
@@ -24,5 +24,4 @@ eventFiles.forEach(file => {
 client.on('error', console.error);
 
 client.login(process.env.BOT_TOKEN);
-
 

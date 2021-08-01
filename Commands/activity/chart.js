@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const path = require('path')
+const path = require('path');
 const {
 	imageToAttachment,
 	getImageFromChartData,
@@ -17,10 +17,10 @@ module.exports = class ChartCommand extends Command {
 		});
 	}
 
-	run(message, args, fromPattern, result) {
+	run(message) {
 		getPlaytime(message.author.id)
 			.then((data) => {
-				const { games, timeRecords } = getChartData(data);// 두 배열 리턴
+				const { games, timeRecords } = getChartData(data);
 				getImageFromChartData(games, timeRecords, message.author.username).then(image => {
 					message.say(imageToAttachment(image));
 				});

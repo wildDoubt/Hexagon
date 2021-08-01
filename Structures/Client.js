@@ -3,13 +3,13 @@ const { CommandoClient } = require('discord.js-commando');
 const path = require('path');
 const { getPlayingActivities } = require('../Utils');
 
-class Client extends CommandoClient{
+class Client extends CommandoClient {
 	constructor(config, options) {
 		super(options);
 		this.userManager = new Map();
 	}
 
-	loadCommands(){
+	loadCommands() {
 		this.registry
 			.registerDefaultTypes()
 			.registerGroups([
@@ -21,7 +21,7 @@ class Client extends CommandoClient{
 			.registerCommandsIn(path.join(__dirname, 'Commands'));
 	}
 
-	loadUserStates(){
+	loadUserStates() {
 		for (const guild of this.guilds.cache) {
 			guild[1].members.cache.forEach(value => {
 				const { user } = value;
