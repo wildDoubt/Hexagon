@@ -18,11 +18,6 @@ module.exports = class ChartCommand extends Command {
 	run(message, args, fromPattern, result){
 		getPlaytime(message.author.id)
 			.then((data) => {
-				// data = [{
-				// 	name: activity_name,
-				// 	playtime: playtime
-				// }...]
-
 				const {games, timeRecords} = getChartData(data);// 두 배열 리턴
 				getImageFromChartData(games, timeRecords, message.author.username).then(image=>{
 					message.say(imageToAttachment(image))

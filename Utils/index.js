@@ -1,7 +1,11 @@
 const Discord = require('discord.js');
 const { CanvasRenderService } = require('chartjs-node-canvas');
 const { PLAYING } = require('./strings.json');
-
+/**
+ *
+ * @param user
+ * @returns {{name: string, start: Date, end: null}[]}
+ */
 const getPlayingActivities = (user) => {
 	return user.presence.activities
 		.filter((value) => value.type === PLAYING)
@@ -16,6 +20,11 @@ const getPlayingActivities = (user) => {
 
 const imageToAttachment = (image) => new Discord.MessageAttachment(image);
 
+/**
+ *
+ * @param {[{name:String, playtime:Number}]} data
+ * @returns {{games: [], timeRecords: []}}
+ */
 const getChartData = (data) => {
 	const games = [];
 	const timeRecords = [];
@@ -35,12 +44,18 @@ const getChartData = (data) => {
 	};
 };
 
+/**
+ *
+ * @param colData
+ * @param rowData
+ * @param username
+ * @returns {Promise<Buffer>}
+ */
 const getImageFromChartData = async (colData, rowData, username) => {
 	const canvas = new CanvasRenderService(
 		600,
 		300,
 	);
-
 	const plugin = {
 		id: 'custom_canvas_background_color',
 		beforeDraw: (chart) => {
