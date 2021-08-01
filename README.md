@@ -27,11 +27,11 @@ Hexagon is a "Discord bot" who can tracked the activity of each member in the ch
 1. Clone this project
    `git clone https://github.com/wildDoubt/Hexagon.git`
    
-2. Modify BOT_TOKEN on the last line of `main.js`
+2. Modify BOT_TOKEN on the last line of `app.js`
 
 3. Recommended connecting to [Atlas](https://www.mongodb.com/cloud/atlas) to use the cloud database.
 
-4. Modify uri on `plugins/MongoDB/index.js`
+4. Modify uri on `plugins/MongoDB/app.js`
 
 ```javascript
 const uri = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@cluster0.tywvp.mongodb.net/Cluster0?retryWrites=true&w=majority`;
