@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { CommandoClient } = require('discord.js-commando');
 const path = require('path');
-const { getPlayingActivities } = require('./Utils');
+const { getPlayingActivities } = require('../Utils');
 
 class Client extends CommandoClient{
 	constructor(config, options) {
