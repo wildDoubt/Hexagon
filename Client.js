@@ -13,8 +13,8 @@ class Client extends CommandoClient{
 		this.registry
 			.registerDefaultTypes()
 			.registerGroups([
-				['first', 'First Command Group'],
-				['second', 'Second Command Group'],
+				['debug', 'Debug Command Group'],
+				['activity', 'Activity Command Group'],
 			])
 			.registerDefaultGroups()
 			.registerDefaultCommands()
