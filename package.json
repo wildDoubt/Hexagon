@@ -2,7 +2,7 @@
   "name": "hexagon",
   "version": "1.0.0",
   "description": "Hexagon is a \"Discord bot\" who can tracked the activity of each member in the channel.",
-  "main": "main.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint --ext .js ./ --fix"
@@ -21,6 +21,7 @@
     "chart.js": "^3.5.0",
     "chartjs-node-canvas": "^3.2.0",
     "discord.js": "^12.5.3",
+    "discord.js-commando": "^0.12.3",
     "mongoose": "^5.13.4"
   },
   "devDependencies": {
