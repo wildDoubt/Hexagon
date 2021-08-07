@@ -28,18 +28,7 @@ module.exports = {
 			return;
 		}
 
-		if (prevActivities.length <= activities.length) {
-			presenceUpdated = true;
-			activities.filter(activity => {
-				return !prevActivities
-					.map(prevActivity => prevActivity.name)
-					.find(value => value === activity.name);
-			})
-				.forEach(value => {
-					console.log(value);
-				});
-		}
-		else {
+		if(prevActivities.length > activities.length) {
 			console.log(newMember.user.username, 'end activity');
 			prevActivities.filter(prevActivity => {
 				return !activities
@@ -52,6 +41,9 @@ module.exports = {
 					recordPlaytime(user_id, endActivity, playtime);
 				});
 			presenceUpdated = true;
+		} else{
+			console.log(newMember.user.username, 'start activity');
+			console.log(activities);
 		}
 	},
 };

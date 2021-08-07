@@ -13,7 +13,7 @@ module.exports = class ChartCommand extends Command {
 			name: path.basename(__filename).split('.')[0],
 			group: path.basename(__dirname),
 			memberName: 'meow',
-			description: 'Replies with a meow, kitty cat.',
+			description: 'Replies with a visual history of your gaming.',
 		});
 	}
 
