@@ -67,14 +67,14 @@ const getImageFromChartData = async (colData, rowData, username) => {
 
 	const configuration = {
 		type: 'bar',
-		data:{
-			labels:colData,
-			backgroundColor:'white',
+		data: {
+			labels: colData,
+			backgroundColor: 'white',
 			datasets: [
 				{
 					label: 'hours',
 					data: rowData,
-					backgroundColor:'#7289d9',
+					backgroundColor: '#7289d9',
 				},
 			],
 		},
@@ -96,7 +96,7 @@ const getImageFromChartData = async (colData, rowData, username) => {
 				},
 			},
 		},
-		plugins:[plugin],
+		plugins: [plugin],
 	};
 	return await canvas.renderToBuffer(configuration);
 };

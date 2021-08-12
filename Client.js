@@ -2,11 +2,12 @@ require('dotenv').config();
 const { CommandoClient } = require('discord.js-commando');
 const path = require('path');
 const { getPlayingActivities } = require('./Utils');
+const User = require('./Data/User');
 
 class Client extends CommandoClient {
 	constructor(config, options) {
 		super(options);
-		this.userManager = new Map();
+		this.userManger = new User();
 	}
 
 	loadCommands() {
@@ -25,10 +26,11 @@ class Client extends CommandoClient {
 		for (const guild of this.guilds.cache) {
 			guild[1].members.cache.forEach(value => {
 				const { user } = value;
-				if (this.userManager.get(user.id) === undefined && !user.bot) {
-					this.userManager.set(user.id, []);
+				const {data} = this.userManger;
+				if (data.get(user.id) === undefined && !user.bot) {
+					data.set(user.id, []);
 					getPlayingActivities(user).forEach(activity => {
-						this.userManager.get(user.id).push(
+						data.get(user.id).push(
 							{
 								name: activity.name,
 								start: activity.start,
@@ -36,7 +38,7 @@ class Client extends CommandoClient {
 							},
 						);
 					});
-					console.log(user.username, this.userManager.get(user.id));
+					console.log(user.username, data.get(user.id));
 				}
 			});
 		}

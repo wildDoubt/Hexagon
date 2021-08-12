@@ -43,7 +43,7 @@ async function addUser(user_data) {
 
 async function recordPlaytime(user_id, activity, playtime) {
 	const collection = db.collection(USER);
-	console.log(user_id, activity, playtime);
+	console.log(user_id, activity.name, playtime);
 	await recordHistory(user_id, activity.name, activity.start);
 	const filter = { user_id: user_id, 'activity.name': activity.name };
 	const updateDocument = {
