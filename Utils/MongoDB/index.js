@@ -2,6 +2,7 @@ require('dotenv').config();
 const { MongoClient } = require('mongodb');
 const { MONGODB_USER, MONGODB_PASSWORD } = process.env;
 const { DB, USER, HISTORY, GUILD } = require('../strings.json');
+const History = require('../../Models/History');
 const uri = `mongodb+srv://${MONGODB_USER}:${MONGODB_PASSWORD}@cluster0.tywvp.mongodb.net/Cluster0?retryWrites=true&w=majority`;
 const client = new MongoClient(uri,
 	{
@@ -14,8 +15,7 @@ async function connect(func, ...args) {
 	try {
 		await client.connect();
 		await func(...args);
-	}
-	finally {
+	} finally {
 		await client.close();
 	}
 }
@@ -27,18 +27,17 @@ async function findUser(user_id) {
 	return user !== undefined;
 }
 
-async function addUser(user_data) {
+async function addUser(user) {
 	// db에 유저 데이터 생성
 	const collection = db.collection(USER);
-	for (const user of user_data) {
-		const exist = await findUser(user.user_id);
-		if (!exist) {
-			const result = await collection.insertOne(user);
-			console.log(
-				`A document was inserted with the _id: ${result.insertedId}`,
-			);
-		}
+	const exist = await findUser(user.user_id);
+	if (!exist) {
+		const result = await collection.insertOne(user);
+		console.log(
+			`A document was inserted with the _id: ${result.insertedId}`,
+		);
 	}
+
 }
 
 async function recordPlaytime(user_id, activity, playtime) {
@@ -74,12 +73,11 @@ async function recordPlaytime(user_id, activity, playtime) {
 async function recordHistory(user_id, activity_name, start_time) {
 	const collection = db.collection(HISTORY);
 	// user 컬렉션에 없는 user_id가 들어오는 경우?? 일단 넣자.
-	const data = {
+	const data = new History({
 		user_id: user_id,
 		activity_name: activity_name,
 		start_time: start_time,
-		end_time: new Date(),
-	};
+	});
 	const result = await collection.insertOne(data);
 	console.log(
 		`A document was inserted with the _id: ${result.insertedId}`,
