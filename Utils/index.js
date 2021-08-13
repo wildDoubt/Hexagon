@@ -1,6 +1,16 @@
 const Discord = require('discord.js');
 const { CanvasRenderService } = require('chartjs-node-canvas');
 const { PLAYING } = require('./strings.json');
+
+
+const isUserInGuild = (userId, guildMembers) =>{
+	for(const memberId of guildMembers){
+		if(memberId===userId) return true;
+	}
+	return false;
+}
+
+
 /**
  *
  * @param user
@@ -12,11 +22,23 @@ const getPlayingActivities = (user) => {
 		.map(value => {
 			return {
 				name: value.name,
-				start: value.timestamps.start,
+				start: new Date(value.createdTimestamp),
 				end: null,
 			};
 		});
 };
+
+const getActivities = (user)=>{
+	return user.activities
+		.filter((value) => value.type === PLAYING)
+		.map(value => {
+			return {
+				name: value.name,
+				start: new Date(value.createdTimestamp),
+				end: null,
+			};
+		});
+}
 
 const imageToAttachment = (image) => new Discord.MessageAttachment(image);
 
@@ -106,4 +128,6 @@ module.exports = {
 	imageToAttachment,
 	getChartData,
 	getImageFromChartData,
+	isUserInGuild,
+	getActivities
 };

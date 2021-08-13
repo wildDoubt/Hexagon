@@ -1,6 +1,6 @@
 const path = require('path');
 const User = require('../Data/User');
-const { getPlayingActivities } = require('../Utils');
+const { getActivities } = require('../Utils');
 const { recordPlaytime } = require('../Utils/MongoDB');
 
 module.exports = {
@@ -8,12 +8,18 @@ module.exports = {
 	once: false,
 	async execute(oldMember, newMember) {
 		const users = new User();
-		const {presenceUpdated, data} = users;
-		if (presenceUpdated) {
-			users.setPresenceUpdated(false);
+		const { data } = users;
+		console.log(`${newMember.user.username} [presenceUpdate] ${newMember.guild.name}`);
+		// console.log('old');
+		// console.log(oldMember.activities.map((v)=>v.name+new Date(v.createdTimestamp)));
+		// console.log('new');
+		// console.log(newMember.activities.map((v)=>v.name+new Date(v.createdTimestamp)));
+		if(oldMember?.activities.length===newMember?.activities.length){
+			console.log('같음')
 			return;
 		}
-		const activities = getPlayingActivities(newMember.user);
+
+		const activities = getActivities(newMember);
 
 		const user_id = newMember.user.id;
 
@@ -21,16 +27,16 @@ module.exports = {
 		data.set(user_id, activities);
 
 		if (prevActivities === undefined || activities === undefined) {
-			console.log(newMember.user.username, ' activity undefined.')
+			console.log(newMember.user.username, ' activity undefined.');
 			return;
 		}
 		if (!Object.prototype.hasOwnProperty.call(prevActivities, 'length')
 			|| !Object.prototype.hasOwnProperty.call(activities, 'length')) {
-			console.log(newMember.user.username, ' activity has no length property.')
+			console.log(newMember.user.username, ' activity has no length property.');
 			return;
 		}
 
-		if(prevActivities.length > activities.length) {
+		if (prevActivities.length > activities.length) {
 			console.log(`${newMember.user.username}: [Activity ended]`);
 			prevActivities.filter(prevActivity => {
 				return !activities
@@ -42,11 +48,10 @@ module.exports = {
 					const playtime = Math.round((curr - endActivity.start) / 1000);
 					recordPlaytime(user_id, endActivity, playtime);
 				});
-		} else{
+		} else if(prevActivities.length < activities.length){
 			console.log(`${newMember.user.username}: [Activity started]`);
-			const temp = activities.map(activity=>activity.name);
+			const temp = activities.map(activity => activity.name);
 			console.log(temp);
 		}
-		users.setPresenceUpdated(true);
 	},
 };

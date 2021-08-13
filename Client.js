@@ -22,11 +22,11 @@ class Client extends CommandoClient {
 			.registerCommandsIn(path.join(__dirname, 'Commands'));
 	}
 
-	loadUserStates() {
+	async loadUserStates() {
 		for (const guild of this.guilds.cache) {
 			guild[1].members.cache.forEach(value => {
 				const { user } = value;
-				const {data} = this.userManger;
+				const { data } = this.userManger;
 				if (data.get(user.id) === undefined && !user.bot) {
 					data.set(user.id, []);
 					getPlayingActivities(user).forEach(activity => {
