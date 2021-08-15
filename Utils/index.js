@@ -1,14 +1,13 @@
 const Discord = require('discord.js');
-const { CanvasRenderService } = require('chartjs-node-canvas');
 const { PLAYING } = require('./strings.json');
+const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 
-
-const isUserInGuild = (userId, guildMembers) =>{
-	for(const memberId of guildMembers){
-		if(memberId===userId) return true;
+const isUserInGuild = (userId, guildMembers) => {
+	for (const memberId of guildMembers) {
+		if (memberId === userId) return true;
 	}
 	return false;
-}
+};
 
 
 /**
@@ -28,7 +27,7 @@ const getPlayingActivities = (user) => {
 		});
 };
 
-const getActivities = (user)=>{
+const getActivities = (user) => {
 	return user.activities
 		.filter((value) => value.type === PLAYING)
 		.map(value => {
@@ -38,7 +37,7 @@ const getActivities = (user)=>{
 				end: null,
 			};
 		});
-}
+};
 
 const imageToAttachment = (image) => new Discord.MessageAttachment(image);
 
@@ -74,14 +73,15 @@ const getChartData = (data) => {
  * @returns {Promise<Buffer>}
  */
 const getImageFromChartData = async (colData, rowData, username) => {
-	const canvas = new CanvasRenderService(
-		600,
-		300,
-	);
+	console.log('username: ' + username);
+	const canvas = new ChartJSNodeCanvas({
+		width: 600, height: 300});
+	canvas.registerFont('assets/Nanum_Gothic/NanumGothic-Regular.ttf', { family: 'NanumGothic' });
 	const plugin = {
 		id: 'custom_canvas_background_color',
 		beforeDraw: (chart) => {
 			const ctx = chart.canvas.getContext('2d');
+			ctx.font = "20px 'NanumGothic'";
 			ctx.fillStyle = 'white';
 			ctx.fillRect(0, 0, chart.width, chart.height);
 		},
@@ -129,5 +129,5 @@ module.exports = {
 	getChartData,
 	getImageFromChartData,
 	isUserInGuild,
-	getActivities
+	getActivities,
 };
